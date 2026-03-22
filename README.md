@@ -43,6 +43,8 @@ This repo collects the best practical patterns, prompts, and guardrails for fixi
   - [COST-02: Use cache-ttl pruning or idle sessions will re-cache junk history](#cost-02-use-cache-ttl-pruning-or-idle-sessions-will-re-cache-junk-history)
 - [Operations](#operations)
   - [OPS-01: Set explicit concurrency limits for agents and subagents](#ops-01-set-explicit-concurrency-limits-for-agents-and-subagents)
+- [Automation](#automation)
+  - [AUTO-01: Standing orders define what, cron defines when](#auto-01-standing-orders-define-what-cron-defines-when)
 
 ## Memory
 
@@ -766,6 +768,55 @@ Then show me:
 - what the main agent concurrency limit is
 - what the subagent concurrency limit is
 - why those limits make sense for safety and cost control
+- any assumptions you made
+```
+
+</details>
+
+## Automation
+
+### AUTO-01: Standing orders define what, cron defines when
+
+Standing orders and cron jobs solve different problems. Standing orders define what the agent is authorized and expected to do. Cron defines when that work should run.
+
+OpenClaw's standing-orders docs recommend keeping the standing instructions in `AGENTS.md` so they are loaded every session. Cron jobs should then trigger that program on a schedule instead of repeating the whole workflow inside every scheduled prompt.
+
+Keep the cron prompt short and point it at the standing order:
+
+```bash
+openclaw cron add \
+  --name "Daily inbox triage" \
+  --cron "0 8 * * 1-5" \
+  --tz "America/New_York" \
+  --session isolated \
+  --message "Execute daily inbox triage per standing orders. Check mail for new alerts. Parse, categorize, and persist each item. Report summary to owner. Escalate unknowns." \
+  --announce
+```
+
+This gives you one place to update the logic later. Change the standing order once in `AGENTS.md`, and the scheduled job keeps using the new behavior without rewriting every cron prompt.
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Review my OpenClaw automation setup and separate standing instructions from scheduling so the logic lives in standing orders and cron only controls timing.
+
+Do all of the following:
+
+1. Find where my standing instructions currently live, preferably in `AGENTS.md`.
+2. Check whether I already have cron jobs or scheduled prompts that duplicate long workflow instructions.
+3. If the workflow logic is embedded directly in cron prompts, move the durable logic into a standing-order section.
+4. Keep the standing-order instructions in `AGENTS.md` unless there is a clear reason to use another file and reference it carefully.
+5. Rewrite the scheduled prompt so it is short and points to the standing order instead of repeating the full workflow.
+6. Keep approval gates, escalation rules, and execution expectations clear in the standing order.
+7. Preserve any existing schedule, timezone, delivery target, and safety behavior unless there is a clear problem.
+
+Then show me:
+- which file you changed for the standing order
+- the exact standing-order block you added or updated
+- which cron job or scheduled prompt you changed
+- the exact scheduled prompt before and after
+- what logic now lives in the standing order vs the cron job
 - any assumptions you made
 ```
 
