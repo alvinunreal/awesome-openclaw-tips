@@ -37,6 +37,7 @@ This repo collects the best practical patterns, prompts, and guardrails for fixi
   - [REL-01: Don't put all your fallbacks on the same provider](#rel-01-dont-put-all-your-fallbacks-on-the-same-provider)
   - [REL-02: Your agent says "done" when it isn't](#rel-02-your-agent-says-done-when-it-isnt)
   - [REL-03: Use heartbeat to rotate recurring checks, not just repeat one generic check](#rel-03-use-heartbeat-to-rotate-recurring-checks-not-just-repeat-one-generic-check)
+  - [REL-04: Turn on tool-loop detection before a bad run burns hours](#rel-04-turn-on-tool-loop-detection-before-a-bad-run-burns-hours)
 - [💸 Cost](#cost)
   - [COST-01: Your heartbeat model is costing you more than you think](#cost-01-your-heartbeat-model-is-costing-you-more-than-you-think)
   - [COST-02: Use cache-ttl pruning or idle sessions will re-cache junk history](#cost-02-use-cache-ttl-pruning-or-idle-sessions-will-re-cache-junk-history)
@@ -614,6 +615,69 @@ Then show me:
 - which checks will rotate
 - what counts as an actionable report vs `HEARTBEAT_OK`
 - whether you kept it as heartbeat or recommended cron for any specific check
+```
+
+</details>
+
+### REL-04: Turn on tool-loop detection before a bad run burns hours
+
+Repeated tool-call loops are one of the fastest ways to waste time and tokens in OpenClaw. An agent can keep cycling through the same tool pattern, make no progress, and keep spending until you stop it.
+
+OpenClaw already has built-in loop detection for this, but the guard is disabled by default. It can detect repeated same-tool patterns, no-progress polling loops, and ping-pong behavior between repeated tool calls.
+
+Start with the default thresholds and turn it on like this:
+
+```json5
+{
+  tools: {
+    loopDetection: {
+      enabled: true,
+      historySize: 30,
+      warningThreshold: 10,
+      criticalThreshold: 20,
+      globalCircuitBreakerThreshold: 30,
+      detectors: {
+        genericRepeat: true,
+        knownPollNoProgress: true,
+        pingPong: true
+      }
+    }
+  }
+}
+```
+
+The docs recommend starting with `enabled: true` and leaving the defaults alone until you see a real reason to tune them. If you get false positives, raise thresholds or disable the specific detector causing trouble instead of turning the whole guard off.
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Review my OpenClaw config and turn on tool-loop detection so bad tool-call loops do not burn time and tokens unchecked.
+
+Do all of the following:
+
+1. Find my OpenClaw config file.
+2. Check whether `tools.loopDetection` is already configured.
+3. If it is missing, add `tools.loopDetection` with OpenClaw's recommended starting setup:
+   - `enabled = true`
+   - `historySize = 30`
+   - `warningThreshold = 10`
+   - `criticalThreshold = 20`
+   - `globalCircuitBreakerThreshold = 30`
+   - `detectors.genericRepeat = true`
+   - `detectors.knownPollNoProgress = true`
+   - `detectors.pingPong = true`
+4. If it already exists, merge carefully instead of overwriting unrelated settings.
+5. Check whether any agent-specific `agents.list[].tools.loopDetection` overrides already exist.
+6. Explain briefly what each threshold does and whether the current setup looks conservative or aggressive.
+7. Keep the initial setup close to defaults unless there is a clear reason to tune it.
+
+Then show me:
+- which config file you changed
+- the exact `tools.loopDetection` block before and after
+- whether any agent-specific overrides exist
+- what the thresholds mean in practice
+- any assumptions you made
 ```
 
 </details>
