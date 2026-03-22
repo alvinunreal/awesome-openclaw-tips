@@ -447,6 +447,8 @@ Better:
 
 The point is not those exact providers. The point is failure independence. A limit or outage in one stack should not take your whole agent down with it.
 
+The default shared path is `agents.defaults.model.fallbacks`. If one agent needs its own fallback chain, OpenClaw also supports a per-agent override in `agents.list[].model = { primary, fallbacks }`.
+
 <details>
 <summary><strong>Copy prompt - implement this tip for me</strong></summary>
 
@@ -456,22 +458,24 @@ Review my OpenClaw model fallback setup and help me choose a provider-diverse fa
 Do all of the following:
 
 1. Find my current OpenClaw model configuration.
-2. Check which providers are currently available in my setup.
-3. Research or inspect the currently available models from those providers and identify good fallback candidates.
-4. Check whether my current primary model and fallbacks are too concentrated in one provider.
-5. Propose a few provider-diverse fallback chains and recommend one, keeping the setup simple.
-6. Keep my current primary model if it still makes sense, unless there is a clear reason to change it.
-7. Explain the tradeoffs of the suggested options - reliability, cost, speed, and model quality.
-8. Ask me to choose one of the suggested fallback chains before changing the config.
-9. After I choose, update the config carefully.
+2. Determine whether my setup currently uses shared fallbacks in `agents.defaults.model.fallbacks`, per-agent fallbacks in `agents.list[].model.fallbacks`, or both.
+3. Check which providers are currently available in my setup.
+4. Research or inspect the currently available models from those providers and identify good fallback candidates.
+5. Check whether my current primary model and fallbacks are too concentrated in one provider.
+6. Propose a few provider-diverse fallback chains and recommend one, keeping the setup simple.
+7. Keep my current primary model if it still makes sense, unless there is a clear reason to change it.
+8. Explain the tradeoffs of the suggested options - reliability, cost, speed, and model quality.
+9. Ask me to choose one of the suggested fallback chains before changing the config.
+10. After I choose, update the config carefully in the correct place - shared defaults for global fallbacks, or `agents.list[].model.fallbacks` for a specific agent override.
 
 Then show me:
+- which config path is currently being used for fallbacks
 - the config file you changed
 - the exact primary and fallback models before
 - the provider and model options you discovered
 - the fallback chains you suggest
 - which option you recommend and why
-- after I choose, the exact primary and fallback models after
+- after I choose, the exact config path and primary/fallback models after
 ```
 
 </details>
