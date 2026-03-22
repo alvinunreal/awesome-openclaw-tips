@@ -24,7 +24,7 @@ This repo collects the best practical patterns, prompts, and guardrails for fixi
 
 ## Table of Contents
 
-- [Memory](#memory)
+- [🧠 Memory](#memory)
   - [MEM-01: Make your agent learn from its mistakes](#mem-01-make-your-agent-learn-from-its-mistakes)
   - [MEM-02: Flush important state before compaction eats it](#mem-02-flush-important-state-before-compaction-eats-it)
   - [MEM-03: Use SQLite memory search before you pay for embeddings](#mem-03-use-sqlite-memory-search-before-you-pay-for-embeddings)
@@ -33,25 +33,27 @@ This repo collects the best practical patterns, prompts, and guardrails for fixi
   - [MEM-06: Make the workspace folder the source of truth and put it under git](#mem-06-make-the-workspace-folder-the-source-of-truth-and-put-it-under-git)
   - [MEM-07: Back up your workspace continuously, not just once](#mem-07-back-up-your-workspace-continuously-not-just-once)
   - [MEM-08: Periodically self-clean memory instead of letting it rot forever](#mem-08-periodically-self-clean-memory-instead-of-letting-it-rot-forever)
-- [Reliability](#reliability)
+- [🛡️ Reliability](#reliability)
   - [REL-01: Don't put all your fallbacks on the same provider](#rel-01-dont-put-all-your-fallbacks-on-the-same-provider)
   - [REL-02: Your agent says "done" when it isn't](#rel-02-your-agent-says-done-when-it-isnt)
   - [REL-03: Use heartbeat to rotate recurring checks, not just repeat one generic check](#rel-03-use-heartbeat-to-rotate-recurring-checks-not-just-repeat-one-generic-check)
-- [Cost](#cost)
+- [💸 Cost](#cost)
   - [COST-01: Your heartbeat model is costing you more than you think](#cost-01-your-heartbeat-model-is-costing-you-more-than-you-think)
   - [COST-02: Use cache-ttl pruning or idle sessions will re-cache junk history](#cost-02-use-cache-ttl-pruning-or-idle-sessions-will-re-cache-junk-history)
   - [COST-03: Local models are often a false economy](#cost-03-local-models-are-often-a-false-economy)
   - [COST-04: Use local models only for repetitive mechanical work](#cost-04-use-local-models-only-for-repetitive-mechanical-work)
-- [Operations](#operations)
+- [⚙️ Operations](#operations)
   - [OPS-01: Set explicit concurrency limits for agents and subagents](#ops-01-set-explicit-concurrency-limits-for-agents-and-subagents)
-- [Automation](#automation)
+- [⏱️ Automation](#automation)
   - [AUTO-01: Standing orders define what, cron defines when](#auto-01-standing-orders-define-what-cron-defines-when)
-- [Architecture](#architecture)
+- [🏗️ Architecture](#architecture)
   - [ARCH-01: Stop using one generic agent for everything](#arch-01-stop-using-one-generic-agent-for-everything)
   - [ARCH-02: Keep your orchestrator as a manager, not the doer](#arch-02-keep-your-orchestrator-as-a-manager-not-the-doer)
   - [ARCH-03: Give different models different prompt files](#arch-03-give-different-models-different-prompt-files)
 
-## Memory
+<a id="memory"></a>
+
+## 🧠 Memory
 
 ### MEM-01: Make your agent learn from its mistakes
 
@@ -446,7 +448,9 @@ Then show me:
 
 </details>
 
-## Reliability
+<a id="reliability"></a>
+
+## 🛡️ Reliability
 
 ### REL-01: Don't put all your fallbacks on the same provider
 
@@ -614,7 +618,9 @@ Then show me:
 
 </details>
 
-## Cost
+<a id="cost"></a>
+
+## 💸 Cost
 
 ### COST-01: Your heartbeat model is costing you more than you think
 
@@ -802,7 +808,9 @@ Then show me:
 
 </details>
 
-## Operations
+<a id="operations"></a>
+
+## ⚙️ Operations
 
 ### OPS-01: Set explicit concurrency limits for agents and subagents
 
@@ -858,7 +866,9 @@ Then show me:
 
 </details>
 
-## Automation
+<a id="automation"></a>
+
+## ⏱️ Automation
 
 ### AUTO-01: Standing orders define what, cron defines when
 
@@ -907,7 +917,9 @@ Then show me:
 
 </details>
 
-## Architecture
+<a id="architecture"></a>
+
+## 🏗️ Architecture
 
 ### ARCH-01: Stop using one generic agent for everything
 
