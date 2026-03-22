@@ -6,7 +6,7 @@ import process from "node:process"
 import { DatabaseSync } from "node:sqlite"
 
 const workspaceRoot = process.cwd()
-const dbPath = path.join(workspaceRoot, "tools", "memory-db", "memory.db")
+const dbPath = path.join(workspaceRoot, "tips", "mem-03", "memory.db")
 const ignoreDirs = new Set([".git", "node_modules", "dist", "build", ".next", ".nuxt"])
 const markdownFiles = []
 
@@ -31,7 +31,7 @@ for (const filePath of markdownFiles) {
   insertFts.run(relativePath, title, content)
 }
 
-console.log(`Indexed ${markdownFiles.length} markdown files into tools/memory-db/memory.db`)
+console.log(`Indexed ${markdownFiles.length} markdown files into tips/mem-03/memory.db`)
 
 function walk(dirPath) {
   const entries = fs.readdirSync(dirPath, { withFileTypes: true })

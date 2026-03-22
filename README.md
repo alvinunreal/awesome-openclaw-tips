@@ -121,3 +121,55 @@ Then show me:
 ```
 
 </details>
+
+### MEM-03: Use SQLite memory search before you pay for embeddings
+
+Most personal OpenClaw setups do not need a vector database just to find old notes. A local SQLite index with FTS5 is often enough.
+
+This tip ships with supporting files in `tips/mem-03/`.
+
+Build the database:
+
+```bash
+node tips/mem-03/rebuild-db.js
+```
+
+Search it:
+
+```bash
+node tips/mem-03/relevant-memory.js "query about previous work"
+```
+
+The scripts scan markdown files, build a SQLite database, and use full-text search to surface likely matches quickly. No API costs, no embedding pipeline, no external service.
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Implement a lightweight SQLite memory search system in my OpenClaw workspace so I can search past notes without paying for embeddings.
+
+Use these supporting files from this repo:
+- `tips/mem-03/rebuild-db.js`
+- `tips/mem-03/relevant-memory.js`
+
+If needed, fetch them directly from:
+- https://raw.githubusercontent.com/alvinunreal/awesome-openclaw-tips/main/tips/mem-03/rebuild-db.js
+- https://raw.githubusercontent.com/alvinunreal/awesome-openclaw-tips/main/tips/mem-03/relevant-memory.js
+
+Do all of the following:
+
+1. Copy those files into my OpenClaw workspace in a sensible location.
+2. Make sure the database output path and command examples match where you placed them.
+3. Build the SQLite memory index.
+4. Test one search query against my workspace.
+5. Add a short note to my workspace instructions explaining when to use SQLite memory search before reading raw markdown files.
+6. If I already have another memory system, integrate carefully instead of replacing it.
+
+Then show me:
+- where you placed the files
+- the exact commands to rebuild and search
+- one sample query and its result
+- any assumptions you made about my current memory layout
+```
+
+</details>

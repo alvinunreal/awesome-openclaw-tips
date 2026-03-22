@@ -8,14 +8,14 @@ import { DatabaseSync } from "node:sqlite"
 const query = process.argv.slice(2).join(" ").trim()
 
 if (!query) {
-  console.error('Usage: node tools/memory-db/relevant-memory.js "your query"')
+  console.error('Usage: node tips/mem-03/relevant-memory.js "your query"')
   process.exit(1)
 }
 
-const dbPath = path.join(process.cwd(), "tools", "memory-db", "memory.db")
+const dbPath = path.join(process.cwd(), "tips", "mem-03", "memory.db")
 
 if (!fs.existsSync(dbPath)) {
-  console.error("memory.db not found. Run: node tools/memory-db/rebuild-db.js")
+  console.error("memory.db not found. Run: node tips/mem-03/rebuild-db.js")
   process.exit(1)
 }
 
