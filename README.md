@@ -275,8 +275,8 @@ Do all of the following:
 4. Create an initial commit if one does not already exist.
 5. If a `.gitignore` is needed for local noise, add a minimal one.
 6. If a remote is already configured, show it.
-7. If no remote exists and GitHub CLI (`gh`) is installed and authenticated, create a new private GitHub repo automatically, add `origin`, and push.
-8. If `gh` is not available or not authenticated, do not fail vaguely - tell me the exact manual commands to create a private repo, add `origin`, and push.
+7. If no remote exists and GitHub CLI (`gh`) is installed and authenticated, create a new private GitHub repo automatically, prefer a name like `openclaw-workspace-<bot-name>`, add `origin`, and push.
+8. If `gh` is not available or not authenticated, do not fail vaguely - tell me the exact manual commands to create a private repo with a sensible name like `openclaw-workspace-<bot-name>`, add `origin`, and push.
 
 Then show me:
 - whether the workspace was already under git
@@ -284,6 +284,70 @@ Then show me:
 - the exact commit you created, if any
 - whether you created and pushed a private remote automatically
 - if not, the exact commands I should run next
+```
+
+</details>
+
+### MEM-07: Back up your workspace continuously, not just once
+
+`git init` is not the backup. The backup only becomes real once you keep pushing updates.
+
+OpenClaw's workspace docs already show the ongoing loop:
+
+```bash
+git status
+git add .
+git commit -m "Update memory"
+git push
+```
+
+That is the habit to build. Prompts change. `MEMORY.md` changes. `memory/` changes. If the private repo only got the first commit and never gets the later updates, it is not really your source of truth backup.
+
+The practical version is simple: put the backup policy in `AGENTS.md`, then run it from a dedicated cron. `AGENTS.md` should define what counts as a meaningful change. The cron should do the actual check and sync. This does not belong in `HEARTBEAT.md` - heartbeat is for health checks, not workspace maintenance.
+
+Commit and push on meaningful workspace changes, not every tiny edit. Good triggers are prompt updates, new durable memories, workflow changes, or anything in the workspace that you would hate to lose.
+
+For example:
+
+```bash
+openclaw cron create \
+  --name workspace-backup-check \
+  --cron "0 21 * * *" \
+  --message "Check the workspace git repo. If meaningful workspace files changed, commit and push them. Skip trivial noise. Never commit secrets or anything under ~/.openclaw/. Report what happened."
+```
+
+<p align="center">
+  <img src="./tips/mem-07/workspace-backup-check.png" alt="OpenClaw cron job configured for workspace backup checks" width="100%" />
+</p>
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Set up a practical ongoing backup workflow for my OpenClaw workspace repo so updates keep getting pushed after the initial setup.
+
+Do all of the following:
+
+1. Check whether my OpenClaw workspace already has a git remote configured.
+2. Show me the exact files or folders in the workspace that should be treated as backup-worthy operating state.
+3. Add a short rule to `AGENTS.md` explaining that workspace changes should be committed and pushed on meaningful changes, not every tiny edit.
+4. Set this up as a dedicated cron or scheduled backup check, not as a heartbeat task.
+5. If there is already a good place for a scheduled backup rule, reuse it instead of inventing a second system.
+6. Include the standard ongoing sync commands:
+   - `git status`
+   - `git add .`
+   - `git commit -m "Update memory"`
+   - `git push`
+7. Add a short warning not to commit secrets, tokens, passwords, or anything under `~/.openclaw/`.
+8. If you see a simple safe way to automate reminders without blindly auto-pushing, suggest it.
+
+Then show me:
+- whether a remote is already configured
+- what counts as backup-worthy workspace state
+- the exact `AGENTS.md` rule you added
+- how the dedicated cron or scheduled check should run
+- the exact ongoing sync commands
+- the secret-safety warning you added
 ```
 
 </details>
