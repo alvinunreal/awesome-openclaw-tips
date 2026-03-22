@@ -42,6 +42,7 @@ This repo collects the best practical patterns, prompts, and guardrails for fixi
   - [COST-01: Your heartbeat model is costing you more than you think](#cost-01-your-heartbeat-model-is-costing-you-more-than-you-think)
   - [COST-02: Use cache-ttl pruning or idle sessions will re-cache junk history](#cost-02-use-cache-ttl-pruning-or-idle-sessions-will-re-cache-junk-history)
   - [COST-03: Local models are often a false economy](#cost-03-local-models-are-often-a-false-economy)
+  - [COST-04: Use local models only for repetitive mechanical work](#cost-04-use-local-models-only-for-repetitive-mechanical-work)
 - [Operations](#operations)
   - [OPS-01: Set explicit concurrency limits for agents and subagents](#ops-01-set-explicit-concurrency-limits-for-agents-and-subagents)
 - [Automation](#automation)
@@ -753,6 +754,46 @@ Then show me:
 - whether I already have local-model support configured
 - the main reasons local would or would not make sense for me
 - the safest setup shape you recommend
+- any assumptions you made
+```
+
+</details>
+
+### COST-04: Use local models only for repetitive mechanical work
+
+Local models make more economic sense when the work is repetitive, narrow, and tolerant of weaker output. That usually means chores like classification, tagging, sorting, extraction, and other mechanical steps that do not need your best reasoning model.
+
+This fits OpenClaw's local-model guidance better than using local as a blanket replacement for your main agent. The docs emphasize large context, strong prompt-injection resistance, and full-size models for serious general-purpose use. That makes local more compelling for bounded low-risk workloads than for your primary high-quality assistant path.
+
+In practice, the safe pattern is usually:
+
+- keep your main agent on a stronger hosted model
+- use local for repetitive background work or narrow helper tasks
+- keep fallbacks available with `models.mode: "merge"` when local reliability matters
+
+That way local handles cheap mechanical work, while your main assistant keeps the quality level needed for planning, synthesis, and higher-trust decisions.
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Review my OpenClaw setup and tell me whether I should use local models for any repetitive mechanical work instead of trying to move my main agent fully local.
+
+Do all of the following:
+
+1. Find my current OpenClaw model configuration.
+2. Identify which parts of my workflow are repetitive and mechanical versus which parts need stronger reasoning or higher output quality.
+3. Check whether I already have any local-model provider configured.
+4. If local models are available, recommend which narrow tasks they could handle safely.
+5. If local models are not available, explain whether adding them would likely be worth it for my workload.
+6. Prefer a hybrid recommendation when that is safer than moving the main agent fully local.
+7. Do not change the config yet unless I ask you to after reviewing the recommendation.
+
+Then show me:
+- what model setup I use now
+- which tasks look suitable for local models
+- which tasks should stay on stronger hosted models
+- whether a hybrid setup makes sense
 - any assumptions you made
 ```
 
