@@ -192,24 +192,25 @@ If task state matters too, put that in an actual task system or another durable 
 <summary><strong>Copy prompt - implement this tip for me</strong></summary>
 
 ```md
-Refactor my OpenClaw setup so durable state lives in OpenClaw memory files instead of relying on chat history.
+Set up durable memory files in my OpenClaw workspace so important context does not depend on chat history.
 
 Do all of the following:
 
-1. Inspect my current setup and identify what important state currently depends too much on chat history.
-2. Move durable facts, preferences, and decisions into `MEMORY.md`.
-3. Move short-term running context into `memory/YYYY-MM-DD.md`.
-4. Update `AGENTS.md` so the agent reads and maintains those files instead of relying on transcript memory.
-5. If I already have a memory system, merge carefully instead of creating duplicates.
-6. If task state belongs in another durable system I already use, keep it there and document that clearly instead of inventing a second task system.
-7. Keep the setup aligned with normal OpenClaw workspace conventions.
+1. Create or update `MEMORY.md` for durable facts, preferences, and decisions.
+2. Create or update `memory/YYYY-MM-DD.md` for short-term running context and daily notes.
+3. Update `AGENTS.md` so the agent:
+   - reads `MEMORY.md` when present
+   - uses `memory/YYYY-MM-DD.md` for ongoing notes
+   - writes important facts to files instead of relying on transcript memory
+4. If these files already exist, merge carefully instead of duplicating them.
+5. If task state belongs in another durable system I already use, keep it there and document that clearly instead of inventing a second task system.
+6. Keep the setup aligned with normal OpenClaw workspace conventions.
 
 Then show me:
-- what state used to live mostly in chat
-- what you wrote to `MEMORY.md`
-- what you wrote to `memory/YYYY-MM-DD.md`
-- what you changed in `AGENTS.md`
-- any parts that still depend on transcript history
+- what files you created or changed
+- the exact rules you added to `AGENTS.md`
+- what belongs in `MEMORY.md` vs `memory/YYYY-MM-DD.md`
+- any assumptions you made
 ```
 
 </details>
