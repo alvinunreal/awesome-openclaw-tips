@@ -1,29 +1,20 @@
 <div align="center">
 
-<img src="./assets/cover.jpg" alt="OpenClaw Tips cover" width="100%" />
-
-<br />
-<br />
-
 # Awesome OpenClaw Tips
 
-<strong>The practical playbook for turning OpenClaw from a fun chatbot into a reliable operating system for recurring work.</strong>
+> ⚠️ Following these tips can easily 10x your OpenClaw setup if you apply them well - star this repo to get latest updates.
 
+<img src="./assets/cover.jpg" alt="OpenClaw Tips cover" width="100%" />
 <br />
-
-![Tips](https://img.shields.io/badge/tips-18-8b5cf6?style=flat-square)
-![Status](https://img.shields.io/badge/status-tested%20and%20curated-16a34a?style=flat-square)
-
+<br />
+<strong>The practical playbook for turning OpenClaw from a fun chatbot into a reliable operating system for recurring work.</strong>
 </div>
-
-OpenClaw gets valuable when it stops acting like a chat window and starts acting like infrastructure.
-
-Most setups break for predictable reasons: cost drift, context bloat, weak memory, unsafe defaults, too many agents, too much trust in chat history, and not enough visibility into what the system is actually doing.
-
-This repo collects the best practical patterns, prompts, and guardrails for fixing those problems.
 
 ## Table of Contents
 
+- [📨 Telegram](#telegram)
+  - [TEL-01: Use Telegram inline buttons for recurring actions](#tel-01-use-telegram-inline-buttons-for-recurring-actions)
+  - [TEL-02: Use Telegram reactions for lightweight feedback](#tel-02-use-telegram-reactions-for-lightweight-feedback)
 - [🧠 Memory](#memory)
   - [MEM-01: Make your agent learn from its mistakes](#mem-01-make-your-agent-learn-from-its-mistakes)
   - [MEM-02: Flush important state before compaction eats it](#mem-02-flush-important-state-before-compaction-eats-it)
@@ -45,6 +36,7 @@ This repo collects the best practical patterns, prompts, and guardrails for fixi
   - [COST-04: Use local models only for repetitive mechanical work](#cost-04-use-local-models-only-for-repetitive-mechanical-work)
 - [⚙️ Operations](#operations)
   - [OPS-01: Set explicit concurrency limits for agents and subagents](#ops-01-set-explicit-concurrency-limits-for-agents-and-subagents)
+  - [OPS-02: Learn the slash commands that actually save bad sessions](#ops-02-learn-the-slash-commands-that-actually-save-bad-sessions)
 - [⏱️ Automation](#automation)
   - [AUTO-01: Standing orders define what, cron defines when](#auto-01-standing-orders-define-what-cron-defines-when)
   - [AUTO-02: Use isolated cron jobs for noisy chores](#auto-02-use-isolated-cron-jobs-for-noisy-chores)
@@ -53,6 +45,134 @@ This repo collects the best practical patterns, prompts, and guardrails for fixi
   - [ARCH-02: Keep your orchestrator as a manager, not the doer](#arch-02-keep-your-orchestrator-as-a-manager-not-the-doer)
   - [ARCH-03: Give different models different prompt files](#arch-03-give-different-models-different-prompt-files)
   - [ARCH-04: Predefine subagent workspaces or they lose shared context](#arch-04-predefine-subagent-workspaces-or-they-lose-shared-context)
+
+<a id="telegram"></a>
+
+## 📨 Telegram
+
+### TEL-01: Use Telegram inline buttons for recurring actions
+
+<table>
+  <tr>
+    <td width="58%" valign="top">
+      <p>If Telegram users have to keep typing the same replies, approvals, or short commands, the workflow gets slower than it needs to be. OpenClaw supports Telegram inline buttons, so recurring actions can be one tap instead of another typed message.</p>
+      <p>The important distinction is that plain text option lists are not inline buttons. For real clickable Telegram buttons, the message must include a real inline-keyboard payload.</p>
+      <p>This is a good fit for approvals and review flows. It also works well for quick replies and common follow-up actions. Use it anywhere repeated choices are clearer as taps than typed messages.</p>
+      <p>Turn on inline buttons with Telegram capability scope:</p>
+      <pre lang="json5"><code>{
+  channels: {
+    telegram: {
+      capabilities: {
+        inlineButtons: "all"
+      }
+    }
+  }
+}</code></pre>
+      <p>The supported scopes are <code>off</code>, <code>dm</code>, <code>group</code>, <code>all</code>, and <code>allowlist</code>.</p>
+    </td>
+    <td width="42%" valign="top">
+      <img src="./tips/tel-01/telegram-inline-buttons.png" alt="Telegram inline buttons rendered as real clickable buttons in chat" width="100%" />
+    </td>
+  </tr>
+</table>
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Review my OpenClaw Telegram setup and enable inline buttons for recurring actions where taps are better than typed replies.
+
+Do all of the following:
+
+1. Find the active OpenClaw config file actually used by this runtime.
+2. Check whether Telegram is configured and currently active.
+3. Identify which Telegram account is being used for this chat/test.
+4. Check whether channels.telegram.capabilities.inlineButtons is already set.
+5. Unless there is a clear reason to limit scope, set: `channels.telegram.capabilities.inlineButtons = "all"`
+6. Preserve any existing Telegram settings that are unrelated.
+7. Do not treat plain-text option lists as buttons.
+8. For real clickable Telegram buttons, send a message using an actual inline keyboard payload.
+9. Use OpenClaw CLI in this form: `openclaw message send --channel telegram --account <accountId> --target <chatId> --message "<text>" --buttons '<json>'`
+10. Ensure the --buttons payload is:
+  - valid JSON
+  - top-level array of rows
+  - each row an array of button objects
+  - each callback button includes text and callback_data
+11. If a style field is supported by tooling, treat it only as a hint. Do not rely on Telegram per-button colors.
+12. After configuration, send a real test message with clickable inline buttons.
+13. Wait for at least one button click if possible, or clearly state if callback verification could not be completed.
+14. Do not claim success unless the buttons were actually rendered as Telegram inline buttons.
+15. Add this information in learnings/memory.
+
+Then report back with:
+- the exact config file changed
+- the exact config value before and after for channels.telegram.capabilities.inlineButtons
+- whether Telegram was already active
+- which Telegram account was used
+- which chat ID / target was tested
+- the exact command used to send the test message
+- whether the buttons rendered as real clickable inline buttons
+- whether at least one callback click was received successfully
+- any assumptions made
+- any follow-up recommendation for recurring-action button patterns
+```
+
+</details>
+
+### TEL-02: Use Telegram reactions for lightweight feedback
+
+Telegram reactions are useful when you want lightweight feedback without another full message. OpenClaw supports both sending reactions and reacting to user reactions as system events.
+
+The main Telegram reaction controls are:
+
+- `channels.telegram.ackReaction` - acknowledgement emoji while processing
+- `channels.telegram.reactionLevel` - `off | ack | minimal | extensive`
+- `channels.telegram.reactionNotifications` - `off | own | all`
+
+For example:
+
+```json5
+{
+  channels: {
+    telegram: {
+      ackReaction: "👀",
+      reactionLevel: "minimal",
+      reactionNotifications: "own"
+    }
+  }
+}
+```
+
+`ackReaction` is good for immediate processing feedback. `reactionNotifications` is useful when you want the bot to notice reactions on its own messages without turning every reaction in the chat into an event.
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Review my OpenClaw Telegram reaction setup and configure lightweight reaction-based feedback that fits how I use the bot.
+
+Do all of the following:
+
+1. Find my OpenClaw config file.
+2. Check whether I already use the Telegram channel.
+3. Check the current values of `channels.telegram.ackReaction`, `channels.telegram.reactionLevel`, and `channels.telegram.reactionNotifications`.
+4. Explain the choices for:
+   - `reactionLevel`: `off`, `ack`, `minimal`, `extensive`
+   - `reactionNotifications`: `off`, `own`, `all`
+5. Recommend a practical default setup for a normal personal Telegram bot.
+6. After I choose, update the config carefully.
+
+Then show me:
+- which config file you changed
+- the exact reaction config before and after
+- what each selected setting does
+- why that setup fits a Telegram bot well
+- any assumptions you made
+```
+
+</details>
+
+
 
 <a id="memory"></a>
 
@@ -887,6 +1007,8 @@ OpenClaw gives you two separate caps:
 - `agents.defaults.maxConcurrent` - max parallel main agent runs across sessions
 - `agents.defaults.subagents.maxConcurrent` - max parallel subagent runs in the dedicated subagent lane
 
+Subagent concurrency is a global setting. Do not put `maxConcurrent` under `agents.list[].subagents`; that per-agent block only supports subagent allowlists such as `subagents.allowAgents`.
+
 Set them explicitly:
 
 ```json5
@@ -915,11 +1037,12 @@ Do all of the following:
 1. Find my OpenClaw config file.
 2. Check whether `agents.defaults.maxConcurrent` is already set.
 3. Check whether `agents.defaults.subagents.maxConcurrent` is already set.
-4. If either value is missing, add explicit concurrency limits with sensible defaults.
+4. If either value is missing, add explicit concurrency limits with sensible defaults under `agents.defaults`.
 5. If values already exist, explain whether they look conservative, aggressive, or mismatched for normal use.
-6. Keep the config simple. Prefer changing only these concurrency keys unless there is a clear reason to do more.
-7. Explain briefly that main-agent concurrency and subagent concurrency are separate limits.
-8. Merge carefully without overwriting unrelated config.
+6. Do not add `maxConcurrent` under `agents.list[].subagents`; that key is invalid there.
+7. Keep the config simple. Prefer changing only these concurrency keys unless there is a clear reason to do more.
+8. Explain briefly that main-agent concurrency and subagent concurrency are separate global limits.
+9. Merge carefully without overwriting unrelated config.
 
 Then show me:
 - which config file you changed
@@ -927,6 +1050,45 @@ Then show me:
 - what the main agent concurrency limit is
 - what the subagent concurrency limit is
 - why those limits make sense for safety and cost control
+- any assumptions you made
+```
+
+</details>
+
+### OPS-02: Learn the slash commands that actually save bad sessions
+
+When a session gets slow, bloated, or confused, the fix is often not another long prompt. OpenClaw already has slash commands for resetting, inspecting, stopping, compacting, switching models, and managing subagents.
+
+The few that matter most in bad sessions are usually:
+
+- `/new` - start a fresh session without dragging the old context along
+- `/compact` - shrink the current session when you want to keep going
+- `/usage` - inspect token or cost burn instead of guessing
+- `/stop` - stop a bad run before it wastes more time or tokens
+- `/model` - switch models when the current path is a poor fit
+- `/subagents` - inspect or control subagent runs when delegation gets messy
+
+These are operational recovery tools, not trivia. If you use OpenClaw regularly, knowing this small set saves more time than trying to rescue every bad session with another prompt.
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Review my OpenClaw setup and create a short cheat sheet of the slash commands that are most useful for recovering bad sessions.
+
+Do all of the following:
+
+1. Check which slash commands are available in my current OpenClaw setup.
+2. Pick the small set that is most useful for slow, bloated, stuck, or confused sessions.
+3. Include at least these when available: `/new`, `/compact`, `/usage`, `/stop`, `/model`, and `/subagents`.
+4. Write a short cheat sheet that explains when to use each command.
+5. Save that cheat sheet in a durable place I already use, such as `AGENTS.md`, `README.md`, or another existing workspace note.
+6. Keep it short and practical instead of listing every command.
+
+Then show me:
+- which file you added the cheat sheet to
+- the exact cheat-sheet section
+- which commands were available in my setup
 - any assumptions you made
 ```
 
