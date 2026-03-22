@@ -225,6 +225,16 @@ Before finalizing a tip, check:
 - Fix each tip to match the new format as it is added.
 - Keep the new format consistent across tips.
 - Prefer repo-contained examples and assets.
+- New tips must be appended at the end of `README.md` only.
+- Add new tips above the unique EOF marker comment in `README.md`:
+
+```html
+<!-- TIP_APPEND_EOF: add new tip sections above this line only -->
+```
+
+- Do not insert by matching `</details>` or any repeated block.
+- Read the final lines first and verify the marker is still at the real end of the file.
+- If the insertion anchor is not unique, stop using that anchor and switch to an explicit end-of-file append.
 
 ## Short version
 

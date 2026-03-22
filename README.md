@@ -48,6 +48,7 @@ This repo collects the best practical patterns, prompts, and guardrails for fixi
   - [AUTO-01: Standing orders define what, cron defines when](#auto-01-standing-orders-define-what-cron-defines-when)
 - [Architecture](#architecture)
   - [ARCH-01: Stop using one generic agent for everything](#arch-01-stop-using-one-generic-agent-for-everything)
+  - [ARCH-02: Keep your orchestrator as a manager, not the doer](#arch-02-keep-your-orchestrator-as-a-manager-not-the-doer)
 
 ## Memory
 
@@ -969,3 +970,46 @@ Then show me:
 ```
 
 </details>
+
+### ARCH-02: Keep your orchestrator as a manager, not the doer
+
+In a multi-agent setup, the main orchestrator works best as a manager. Its job is to plan, route work, keep context straight, and report back. Once it starts trying to do every research task, coding task, and background chore itself, the system gets slower and less reliable.
+
+This matches OpenClaw's multi-agent and delegate patterns. Separate agents can own different workspaces, sessions, and roles. That only helps if the top-level agent actually orchestrates instead of absorbing all the work itself.
+
+The practical split looks like this:
+
+- the orchestrator decides what needs to happen
+- specialist agents do the bounded work
+- the orchestrator collects results and reports the outcome
+
+If the main agent is busy doing the work itself, it is not really orchestrating.
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Review my OpenClaw setup and tell me whether my main agent should act more like an orchestrator that plans and delegates instead of trying to do all work itself.
+
+Do all of the following:
+
+1. Find my current OpenClaw agent setup.
+2. Check whether I already have multiple agents or roles configured.
+3. Look at the kinds of work my main agent is expected to handle and identify whether it is mixing orchestration with too much direct execution.
+4. If a manager-style orchestrator makes sense, recommend what the main agent should keep doing directly and what should move to specialist agents.
+5. Keep the recommendation practical. Prefer a small separation of responsibilities, not a complex hierarchy.
+6. Explain how this would improve clarity, reliability, or cost control.
+7. Do not change my config yet unless I ask you to after reviewing the recommendation.
+
+Then show me:
+- what my main agent is doing now
+- whether it is acting more like a manager or a doer
+- what work should stay with the main agent
+- what work should move to specialist agents
+- what tradeoffs come with this split
+- any assumptions you made
+```
+
+</details>
+
+<!-- TIP_APPEND_EOF: add new tip sections above this line only -->
