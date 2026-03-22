@@ -51,6 +51,7 @@ This repo collects the best practical patterns, prompts, and guardrails for fixi
   - [ARCH-01: Stop using one generic agent for everything](#arch-01-stop-using-one-generic-agent-for-everything)
   - [ARCH-02: Keep your orchestrator as a manager, not the doer](#arch-02-keep-your-orchestrator-as-a-manager-not-the-doer)
   - [ARCH-03: Give different models different prompt files](#arch-03-give-different-models-different-prompt-files)
+  - [ARCH-04: Predefine subagent workspaces or they lose shared context](#arch-04-predefine-subagent-workspaces-or-they-lose-shared-context)
 
 <a id="memory"></a>
 
@@ -1124,6 +1125,57 @@ Then show me:
 - which model paths look different enough to justify separate prompt setups
 - what should stay shared vs what should be tuned per model path
 - what tradeoffs come with keeping separate prompt files
+- any assumptions you made
+```
+
+</details>
+
+### ARCH-04: Predefine subagent workspaces or they lose shared context
+
+Spawned agents do not automatically share your main workspace context. If you call `sessions_spawn` against an agent that is not predefined with an explicit workspace, OpenClaw can create a separate `workspace-<agentId>/` with its own empty `AGENTS.md`.
+
+That means the spawned agent may miss the standing orders, memory files, and shared project context you assumed it would inherit.
+
+The runbook recommendation is explicit: if you want shared context across spawned agents, predefine them in `agents.list` with explicit workspace paths.
+
+For example:
+
+```json5
+{
+  agents: {
+    list: [
+      {
+        id: "researcher",
+        workspace: "~/.openclaw/workspace"
+      }
+    ]
+  }
+}
+```
+
+If you do not want a shared workspace, that is fine too. The important part is to choose deliberately. Accidental empty workspaces are what cause confusing subagent results.
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Review my OpenClaw subagent setup and make sure spawned agents use intentional workspace paths instead of accidentally running with empty default workspaces.
+
+Do all of the following:
+
+1. Find my current OpenClaw agent configuration.
+2. Check whether I already define subagents in `agents.list` with explicit `workspace` paths.
+3. Identify any spawned-agent workflow where shared context is expected.
+4. If a spawned agent should share the main workspace context, recommend or add an explicit `workspace` path for that agent.
+5. If a spawned agent should stay isolated, make that explicit too instead of relying on accidental defaults.
+6. Explain which agents should share context and which should stay isolated.
+7. Do not change unrelated agent settings while doing this.
+
+Then show me:
+- which config file you changed
+- the exact agent block before and after
+- which spawned agents now share workspace context
+- which spawned agents stay isolated
 - any assumptions you made
 ```
 
