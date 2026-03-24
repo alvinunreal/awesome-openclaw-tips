@@ -1,13 +1,15 @@
 <div align="center">
+<img src="./assets/cover.png" alt="OpenClaw Tips cover" width="15%" />
 
 # Awesome OpenClaw Tips
-
-> ⚠️ Following these tips can easily 10x your OpenClaw setup if you apply them well - star this repo to get latest updates.
-
-<img src="./assets/cover.jpg" alt="OpenClaw Tips cover" width="100%" />
-<br />
+<p>
+  <a href="https://www.reddit.com/r/OpenClaw_Tips/">
+    <img src="https://img.shields.io/badge/Subreddit-r%2FOpenClaw__Tips-FF4500?logo=reddit&logoColor=white" alt="Subreddit: r/OpenClaw_Tips" />
+  </a>
+</p>
 <br />
 <strong>The practical playbook for turning OpenClaw from a fun chatbot into a reliable operating system for recurring work.</strong>
+<p>These tips were gathered from hands-on use, docs, community setups, and repo deep-dives; see <a href="#acknowledgements">Acknowledgements</a>.</p>
 </div>
 
 ## Table of Contents
@@ -1386,6 +1388,12 @@ Then show me:
 ```
 
 </details>
+
+
+## Acknowledgements
+
+- [digitalknk/openclaw-runbook](https://github.com/digitalknk/openclaw-runbook)
+- [ucsandman/OpenClaw-Setup](https://github.com/ucsandman/OpenClaw-Setup)
 
 
 <!-- TIP_APPEND_EOF: add new tip sections above this line only -->
