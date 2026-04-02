@@ -33,6 +33,7 @@
   - [MEM-06: Make the workspace folder the source of truth and put it under git](#mem-06-make-the-workspace-folder-the-source-of-truth-and-put-it-under-git)
   - [MEM-07: Back up your workspace continuously, not just once](#mem-07-back-up-your-workspace-continuously-not-just-once)
   - [MEM-08: Periodically self-clean memory instead of letting it rot forever](#mem-08-periodically-self-clean-memory-instead-of-letting-it-rot-forever)
+  - [MEM-09: Delete the old session on /new so resets do not leave junk behind](#mem-09-delete-the-old-session-on-new-so-resets-do-not-leave-junk-behind)
 - [🛡️ Reliability](#reliability)
   - [REL-01: Don't put all your fallbacks on the same provider](#rel-01-dont-put-all-your-fallbacks-on-the-same-provider)
   - [REL-02: Your agent says "done" when it isn't](#rel-02-your-agent-says-done-when-it-isnt)
@@ -644,6 +645,77 @@ Then show me:
 - any contradictions or stale entries you found
 - the exact `HEARTBEAT.md` rule you added
 - whether you used heartbeat or recommended cron instead
+```
+
+</details>
+
+### MEM-09: Delete the old session on `/new` so resets do not leave junk behind
+
+`/new` starts a fresh session, but that does not automatically mean the old session record and transcript disappear from disk. If you reset often, old sessions can keep accumulating in `sessions.json` and the `sessions/` folder even though the live chat already moved on.
+
+OpenClaw internal hooks are enough to clean this up. Turn on the built-in hook entry and add a handler at `hooks/delete-session-on-new/handler.ts` that removes the previous session entry when `/new` runs. If you still want a recovery path, archive the transcript instead of hard-deleting it.
+
+Turn on the hook like this:
+
+```json5
+{
+  hooks: {
+    internal: {
+      enabled: true,
+      entries: {
+        "delete-session-on-new": {
+          enabled: true
+        }
+      }
+    }
+  }
+}
+```
+
+This repo includes a working example handler in `tips/mem-09/handler.ts`.
+
+The practical behavior is:
+
+- intercept `/new`
+- find the previous session entry being reset
+- remove that session key from `sessions/sessions.json`
+- move the transcript into `sessions/archive/` instead of losing it completely
+
+That keeps `/new` closer to what many people expect: a real reset for live work, without silently growing stale session state forever.
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Review my OpenClaw setup and make `/new` clean up the previous session instead of letting old session records pile up.
+
+Use this helper file from this repo:
+- `tips/mem-09/handler.ts`
+
+If needed, fetch it directly from:
+- https://raw.githubusercontent.com/alvinunreal/awesome-openclaw-tips/main/tips/mem-09/handler.ts
+
+Do all of the following:
+
+1. Find the active OpenClaw config file actually used by this runtime.
+2. Check whether `hooks.internal` is already enabled.
+3. Enable this hook entry without overwriting unrelated hook settings:
+   - `hooks.internal.enabled = true`
+   - `hooks.internal.entries.delete-session-on-new.enabled = true`
+4. Create or update `hooks/delete-session-on-new/handler.ts` using the helper file.
+5. Make sure the handler only runs for the `/new` command.
+6. Make sure it removes the previous session entry, not the fresh replacement session.
+7. Archive the old transcript into `sessions/archive/` instead of hard-deleting it, unless I explicitly want permanent deletion.
+8. Test the behavior if possible by creating a fresh session, running `/new`, and confirming the old session entry no longer remains active in the session store.
+9. Do not claim success unless you verified that the old session was cleaned up or clearly explain what blocked verification.
+
+Then show me:
+- which config file you changed
+- the exact hook config block before and after
+- whether `hooks/delete-session-on-new/handler.ts` was created or updated
+- whether the old session was deleted from the session store
+- whether the transcript was archived or deleted
+- any assumptions you made
 ```
 
 </details>
