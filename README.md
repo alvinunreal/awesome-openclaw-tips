@@ -24,6 +24,7 @@
 - [📨 Telegram](#telegram)
   - [TEL-01: Use Telegram inline buttons for recurring actions](#tel-01-use-telegram-inline-buttons-for-recurring-actions)
   - [TEL-02: Set a system prompt per Telegram topic so /new resets noise without losing purpose](#tel-02-set-a-system-prompt-per-telegram-topic-so-new-resets-noise-without-losing-purpose)
+  - [TEL-03: Give OpenClaw its own Telegram topic for fast admin work](#tel-03-give-openclaw-its-own-telegram-topic-for-fast-admin-work)
 - [🧠 Memory](#memory)
   - [MEM-01: Make your agent learn from its mistakes](#mem-01-make-your-agent-learn-from-its-mistakes)
   - [MEM-02: Flush important state before compaction eats it](#mem-02-flush-important-state-before-compaction-eats-it)
@@ -248,6 +249,76 @@ Then show me:
 - which chat id and topic/thread id were configured
 - the exact `systemPrompt` now used for that topic
 - whether `/new` was tested successfully in that topic
+- any assumptions you made
+```
+
+</details>
+
+
+### TEL-03: Give OpenClaw its own Telegram topic for fast admin work
+
+If OpenClaw config changes, repo checks, cron issues, and bot maintenance all happen in the same general chat, operational work gets mixed into everything else. A dedicated Telegram topic with its own `systemPrompt` gives OpenClaw a standing admin lane for config review, source inspection, and safe git follow-up.
+
+This works well for things like checking repo status, reviewing changed files, suggesting `.gitignore` updates, or preparing commits for your OpenClaw config workspace without dragging product or client chatter into the same thread.
+
+<p align="center">
+  <img src="./tips/tel-03/telegram-openclaw-admin-topic.png" alt="Dedicated Telegram topic used for OpenClaw admin work like repo review and commit follow-up" width="72%" />
+</p>
+
+<p>Use a topic-specific prompt under the exact Telegram account and chat path you already use. For account-nested Telegram config, it can look like this:</p>
+<pre lang="json5"><code>{
+  channels: {
+    telegram: {
+      max: {
+        enabled: true,
+        direct: {
+          "*": {
+            topics: {
+              "1398645": {
+                systemPrompt: "This is the OpenClaw admin topic. In this topic, manage my OpenClaw config, inspect OpenClaw source when needed, review repo status, suggest what should be committed or ignored, and ask before making git commits. OpenClaw source code is in workspace-max/repos/openclaw and my global config is in ~/.openclaw/openclaw.json."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}</code></pre>
+
+<p>Keep the prompt narrow and operational. Tell the topic what it is for, where the OpenClaw repo lives, where the active config lives, and what commit behavior you want. If you want approval before commits or `.gitignore` changes, say that directly in the topic prompt.</p>
+
+<p>This is different from a generic project topic. The point is to have one permanent thread that OpenClaw treats as its own maintenance console.</p>
+
+<details>
+<summary><strong>Copy prompt - implement this tip for me</strong></summary>
+
+```md
+Review my OpenClaw Telegram setup and create a dedicated Telegram topic for OpenClaw admin work so I can manage config and repo changes quickly without mixing that work into other chats.
+
+Do all of the following:
+
+1. Find the active OpenClaw config file actually used by this runtime.
+2. Check which Telegram account and chat path this conversation uses.
+3. Identify the exact topic/thread id I want to dedicate to OpenClaw admin work.
+4. Add or update a topic-specific `systemPrompt` at the correct Telegram config path for that topic.
+5. Keep unrelated Telegram settings intact.
+6. Make the prompt explicitly cover:
+   - OpenClaw config review
+   - OpenClaw source inspection when needed
+   - repo status checks
+   - recommendations for what to commit vs ignore
+   - asking for approval before commits or `.gitignore` changes unless I said otherwise
+7. Include the real important paths in the prompt, such as my OpenClaw repo path and active config path.
+8. If this setup is account-nested, apply the change under the correct account entry instead of the shared default path.
+9. Test the topic if possible by asking for repo status or config status inside that topic.
+10. Do not claim success unless the topic is configured and the behavior reflects the topic-specific prompt.
+
+Then show me:
+- which config file you changed
+- the exact Telegram topic config block before and after
+- which Telegram account, chat id, and topic/thread id were configured
+- the exact `systemPrompt` now used for that topic
+- whether you tested it in that topic
 - any assumptions you made
 ```
 
